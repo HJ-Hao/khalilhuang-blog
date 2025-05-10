@@ -137,3 +137,28 @@
   --docsearch-primary-color: var(--vp-c-brand-1) !important;
 }
 
+.post-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.post-group {
+  margin-bottom: 30px;
+}
+
+.post-group h2 {
+  border-bottom: 1px solid var(--vp-custom-block-tip-bg);
+  padding-bottom: 5px;
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.post-item {
+  margin: 15px 0;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.post-item:hover {
+  background-color: var(--vp-custom-block-tip-bg);
+}

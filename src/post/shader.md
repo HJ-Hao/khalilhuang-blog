@@ -1,5 +1,12 @@
+---
+title: Shader 入门与实践
+date: 2024-05-08
+---
+
 # Shader 入门与实践
+
 ## 关于Shader
+
 ### 什么是Shader
 Shader（着色器）是一种用于在计算机图形学中进行图形渲染的程序。它们是在图形处理单元（GPU）上执行的小型程序，用于控制图形的各个方面，如颜色、光照、纹理映射、投影等。
 
@@ -28,7 +35,7 @@ WebGL通过GPU来加速图形渲染，可以利用计算机的硬件加速功能
 2. 片元处理: 通过片元着色器计算一个片元最终的颜色
 3. 测试和混合阶段：这一阶段用于控制像素的可见性和颜色混合，这个阶段检测片元的对应的深度和模板(Stencil)值，用它们来判断这个片元是其它物体的前面还是后面，决定是否应该丢弃。这个阶段也会检查alpha值（alpha值定义了一个物体的透明度）并对物体进行混合 
 
-![pipeline](./assets/shader/pipeline.png) 
+![pipeline](../assets/shader/pipeline.png) 
 
 <p align=center style="font-size:14px;color:#C0C0C0;text-decoration:underline">图片来源:learnopengl</p>
 
@@ -44,7 +51,7 @@ WebGL通过GPU来加速图形渲染，可以利用计算机的硬件加速功能
 #### 如何使用ShaderToy
 进入网页后，点击上方导航栏的New就进入到code的界面了
 
-![shadertoy interface](./assets/shader/shadertoy-interface.png)
+![shadertoy interface](../assets/shader/shadertoy-interface.png)
 
 ## 初识GLSL
 GLSL(Graphics Library Shader Language)是一种用于编写着色器程序的编程语言，特别用于在图形处理单元（GPU）上执行图形渲染任务, 有以下几个特点
@@ -72,7 +79,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
 我们先来看fragCoord这个输入参数。正如前文提到的，ShaderToy内部帮我们实现了顶点着色器，直接给我们提供了输入。fragCoord是一个vec2类型的值，它代表了画布的XY坐标，左下角的值为（0，0）而右上角是 (iResolution.x, iResolution.y)，如下图所示。
 
-![fragCoord](./assets/shader/fragCoord.png)
+![fragCoord](../assets/shader/fragCoord.png)
 通常我们为了方便处理会把坐标归一化成（0,1）或者是（-1,1）
 ```glsl
 vec2 uv = fragCoord/iResolution.xy;
@@ -85,7 +92,7 @@ vec2 uv = fragCoord/iResolution.xy;
 vec3 col = vec3(0, 0, 0);
 ```
 点击编辑器左下角的编辑按钮或者用快捷键 Alt+Center 、Option+Enter, 就可以看到画布变成黑色了
-![screen-1](./assets/shader/screen-1.png) 
+![screen-1](../assets/shader/screen-1.png) 
 
 需要注意的是，ShaderToy上的片元着色器代码是与原生的WebGL有所不同（其他平台也是）。但是核心概念是一致的, 输入一个坐标得到一个颜色值, 即
 
@@ -156,7 +163,7 @@ vec4 y = c * v;
 或许你会想知道，在ShaderToy中，由于无法编写顶点着色器来处理顶点数据，我们如何绘制一个圆呢？这时就需要介绍一下**有符号距离场（Signed Distance Field）**的概念。SDF是一种用于表示图形形状的数据结构, 它描述了从给定点到最近图形的有向距离。以每个点为中心，计算该点到最近图形表面的距离，并根据点在图形内部还是外部分别赋予正值或负值。SDF可以用来绘制3D或者2D的图形。这里给出了常用2D SDF的示例，感兴趣可以自行查阅[https://iquilezles.org/articles/distfunctions2d/](https://iquilezles.org/articles/distfunctions2d/)
 
 我们都知道圆的一般方程，如下图所示:
-![screen-2](./assets/shader/screen-2.png) 
+![screen-2](../assets/shader/screen-2.png) 
 我们将上述方程改写成下面这种形式，代入点的坐标信息，我们可以很轻松的判断这个点和圆的位置信息，当>0时，表示点在圆外，当<0时，表示在圆内，=0则在圆上。
 > y^2 + x^2 - 4
 
@@ -179,7 +186,7 @@ float sdCircle( vec2 p, float r )
 之后，我们定义将uv传入sdCircle函数中得到距离d, 再根据d的大小输出不同的颜色。
 
 这里我们用到了step函数，它是glsl内置的函数，它接受两个参数第一个是给定的阈值（edge），另外一个是判断的值(x)，当x>=edge时返回1否则返回0。它的图像是这样的:
-![screen-3](./assets/shader/screen-3.png) 
+![screen-3](../assets/shader/screen-3.png) 
 
 我们以半径为阈值，小于阈值的值返回0, 大于返回1。这样我们就可以渲染一个黑色的圆。
 
@@ -192,7 +199,7 @@ fragColor = vec4(col,1.);
 ```
 
 最后输出的结果如下:
-![screen-4](./assets/shader/screen-4.png) 
+![screen-4](../assets/shader/screen-4.png) 
 
 现在我们给圆改变一下颜色。一开始我们注释掉的颜色代码。现在我们可以用上了，这是一个颜色变化的动画，这里用到了三角函数**cos** 和 **iTime**(shader代码的运行时间)，由于三角函数的周期性，可以很容易得实现动画效果。
 ```glsl
@@ -209,7 +216,7 @@ float res = step(r, d);
 vec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,2,4));
 col = (1. -res)* col + res* bgCol;
 ```
-![screen-5](./assets/shader/screen-5.png) 
+![screen-5](../assets/shader/screen-5.png) 
 
 完整代码
 ```glsl
@@ -247,13 +254,13 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 在实际处理的时候，会把原来的RGB颜色编码格式转换成YUV颜色编码格式。[YUV](https://zh.wikipedia.org/wiki/YUV "按住 ⌘ 点击访问 https://zh.wikipedia.org/wiki/YUV") ，是一种常用于影像处理组件的颜色编码格式。其中，Y代表明亮度(luma; brightness)，而U和V分别存储色度(色讯; chrominance; color)部分。转换后，我们只需要对比UV两个通道，这样能够更方便地进行处理。
 
 
-![610px-YUV_UV_plane.png](./assets/shader/uv.png)
+![610px-YUV_UV_plane.png](../assets/shader/uv.png)
 
 <p align=center>U-V color plane示例，Y value = 0.5，代表RGB色域</p>
 
 wiki上给出了转换的公式，我们改写成GLSL
 
-![rgb-to-uv.png](./assets/shader/rgbtouv.png)
+![rgb-to-uv.png](../assets/shader/rgbtouv.png)
 
 ```glsl
 vec2 RGBtoUV(in vec3 rgb) {
@@ -268,7 +275,7 @@ vec2 RGBtoUV(in vec3 rgb) {
 
 之后进行纹理的采样，通过texture函数并传入uv坐标从纹理中采样颜色。uv的范围为（0，0）到（1，1），前者表示纹理的左下角，后者则是右上角，如下图所示:
 
-![textureUV.png](./assets/shader/texture.png)
+![textureUV.png](../assets/shader/texture.png)
 
 ```glsl
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
@@ -300,7 +307,7 @@ col.a = fullMask;
 P.S. 由于ShaderToy中设置透明通道是没有效果的，可以尝试直接输出fullMask
 
 
-![screen-6](./assets/shader/screen-6.png)
+![screen-6](../assets/shader/screen-6.png)
 
 仔细看可以发现边缘部份的一些区域是没有处理到的。为了解决这个问题，我们可以通过将仅包含亮度信息的[灰度值](https://zh.wikipedia.org/wiki/%25E7%259B%25B8%25E5%25AF%25B9%25E5%2585%2589%25E4%25BA%25AE%25E5%25BA%25A6 "按住 ⌘ 点击访问 https://zh.wikipedia.org/wiki/%25E7%259B%25B8%25E5%25AF%25B9%25E5%2585%2589%25E4%25BA%25AE%25E5%25BA%25A6")与输出的RGB值进行混合来修复。混合的插值参数可以通过使用baseMask和spill宏参数进行计算。下面是相关的代码:
 
@@ -317,7 +324,7 @@ col.rgb = mix(vec3(desat), col.rgb, spillVal);
 
 最后效果如图示:
 
-![screen-7](./assets/shader/screen-7.png)
+![screen-7](../assets/shader/screen-7.png)
 P.S. 实际使用中，上面几个宏变量（除了luminance）可以修改成uniform传入，方便调整以适配不同的素材
 
 完整代码
@@ -359,8 +366,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
 ### 更多例子...
 
-## 结尾
-感谢阅读，欢迎交流指正，后续有时间会继续更新一些实践案例。
+to be continued
 
 ## 相关资源
 https://www.shadertoy.com/

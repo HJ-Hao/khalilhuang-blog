@@ -8,20 +8,9 @@ export default defineConfig({
   cleanUrls: true,
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
-    nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Blogs', link: '/ts-enum-byte' }
-    ],
+    nav: [],
 
-    sidebar: [
-      {
-        text: 'Blogs',
-        items: [
-          { text: '浅析TS枚举与位运算的结合', link: '/ts-enum-byte' },
-          { text: 'Shader 入门与实践', link: '/shader' }
-        ]
-      }
-    ],
+    sidebar: [],
 
     // socialLinks: [
     //   { icon: 'github', link: 'https://github.com/vuejs/vitepress' }
