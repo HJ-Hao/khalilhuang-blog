@@ -58,7 +58,7 @@ PS: width设置为1，表示物体的宽度与图片的宽度一致，另外heig
 PS:  由于浏览器策略，这里必须要开启https才能拉起摄像头
 
 
-<p align=center><img src="../assets/mind-ar/screen-4.jpg" alt="2191682757207_.pic.jpg" width="30%" /></p>
+<p align=center><img src="../assets/mind-ar/screen-2.jpg" alt="2191682757207_.pic.jpg" width="30%" /></p>
 
 #### 识别多个图片
 在上面demo的基础上，支持识别多个图片的效果。因为更新了识别的图片，我们需要重新生成.mind文件。
@@ -97,7 +97,7 @@ PS: 需要注意同时识别多张图片可能会对性能造成一定影响
 
 实现效果如下: 
 
-<p align=center><img src="../assets/mind-ar/screen-2.jpg" alt="2241682782562_.pic.jpg" width="30%" /></p>
+<p align=center><img src="../assets/mind-ar/screen-3.jpg" alt="2241682782562_.pic.jpg" width="30%" /></p>
 
 PS: 模型如果出现色值过暗等情况，可以考虑在a-scene设置下面属性,具体原理可以看下这个
 [issue](https://github.com/aframevr/aframe/issues/3509)
@@ -139,7 +139,7 @@ MindAR暴露两个参数允许用户调整平滑效果分别是**filterMinCF**�
  </a-entity>
 ```
 
-<p align=center><img src="../assets/mind-ar/screen-3.jpg" alt="2221682781006_.pic.jpg" width="30%" /></p>
+<p align=center><img src="../assets/mind-ar/screen-4.jpg" alt="2221682781006_.pic.jpg" width="30%" /></p>
 
 以上就是MindAR基础的一些demo，限于篇幅原因还有交互、自定义UI等功能和案例没有详细介绍，大家可以前往官方的[文档](https://hiukim.github.io/mind-ar-js-doc/)查阅。
 
