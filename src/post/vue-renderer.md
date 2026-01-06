@@ -3,11 +3,11 @@ title: Vue.js渲染器设计学习
 date: 2023-11-29
 ---
 
-# 1. 什么是渲染器
+## 1. 什么是渲染器
 渲染器是Vue中负责执行渲染工作的组件，它的核心功能是将虚拟DOM（Virtual DOM）转换为特定平台的实际元素。
 ![alt text](../assets/vue-renderer/image.png)
-## 1.1 渲染器核心概念
-### 1.1.1 虚拟DOM
+### 1.1 渲染器核心概念
+#### 1.1.1 虚拟DOM
 虚拟DOM是一种用JavaScript对象描述DOM结构的抽象表示。虚拟DOM具有以下优势
 1. 性能优化：通过批量更新和智能Diff算法，减少直接操作DOM的次数，比起传统直接获取dom插入节点性能更好
 2. 跨平台能力：同一虚拟节点树可以在不同平台以不同方式渲染
@@ -28,12 +28,12 @@ const vnode = {
   // ... 其他内部属性
 }
 ```
-### 1.1.2 渲染器核心任务
+#### 1.1.2 渲染器核心任务
 基于虚拟 DOM，渲染器的核心任务可以概括为两大类：
 - 挂载（mount）：把虚拟 DOM 渲染成真实 DOM，并挂载到容器中。
 - 更新（patch）：当虚拟 DOM 发生变化时，只对差异部分更新真实 DOM，这个过程叫做“打补丁（patch）”。
 可以简单理解为：第一次渲染做“挂载”，后续渲染做“打补丁”。
-# 2. 渲染器API设计
+## 2. 渲染器API设计
 初始化渲染器需要调用createRender函数创建，接受一个renderOptions的参数, 返回一个包括render，hydrate，createApp能力的渲染器对象。
 ```ts
 // packages/runtime-core/src/renderer.ts
@@ -195,11 +195,11 @@ function ensureRenderer(): Renderer<Element | ShadowRoot> {
   )
 }
 ```
-# 3. 渲染器实现
+## 3. 渲染器实现
 在上面的代码中我们已经看到，渲染器的入口是 render 函数，而真正“做事”的，是它内部调用的 patch。在 Vue 源码中，patch 会根据不同类型的 vnode(type 和 shapeFlag) 分发到不同的处理逻辑，比如普通元素、组件、文本、注释等。这里我们主要讨论元素的渲染
-## 3.1 Element
+### 3.1 Element
 当Vnode的shapeFlag属性命中了ELEMENT枚举，说明它是一个普通的 DOM 元素节点，在patch内部最终会走到processElement方法。再根据传入的新旧节点比较，判断是mount还是patch流程。
-### 3.1.1 挂载  mountElement
+#### 3.1.1 挂载  mountElement
 挂载元素的主要过程可以分为以下四步:
 1. 创建元素：通过 hostCreateElement 调用平台相关 API（浏览器中就是 document.createElement）。
 2. 设置属性/事件：遍历 props，统一交给 hostPatchProp 处理。
@@ -269,7 +269,7 @@ function mountElement(vnode, container, anchor) {
   hostInsert(el, container, anchor)
 }
 ```
-### 3.1.2 更新 patchElement
+#### 3.1.2 更新 patchElement
 更新整体流程上和挂载类似，区别在于更新不需要新创建dom节点，而是直接复用现有dom。主要流程如下：
 1. 复用旧 DOM：n2.el = n1.el
 2. 更新子节点：获取新旧子节点，调用patchChildrendiff新旧子节点
@@ -313,7 +313,7 @@ const patchElement = (
     
   }
 ```
-#### 3.1.2.1 patch的性能优化
+##### 3.1.2.1 patch的性能优化
 在patch过程元素属性和子节点的更新操作都有做对应的优化处理，按需进行更新。
 1. 属性
   属性更新的优化关键在于vnode上的patchFlag属性。patchFlag是编译时生成的位掩码（bitmask），用于标记哪些属性是动态的，运行时据此只更新变化的部分，避免全量 diff。
@@ -442,14 +442,14 @@ if (dynamicChildren) {
   )
 }
 ```
-### 3.1.3 属性处理
+#### 3.1.3 属性处理
 在浏览器平台下，hostPatchProp 就是对 patchProp 的封装。patchProp 的职责是根据属性的不同类型，选择合适的更新策略。
 可以将需要处理的prop分为以下几类：
 1. HTML Attributes
 2. DOM properties
 3. 样式相关 class 和 style
 4. 事件处理
-#### 3.1.3.1 HTML Attributes & DOM properties
+##### 3.1.3.1 HTML Attributes & DOM properties
 HTML Attributes 就是指在HTML 标签上定义的属性。
 DOM properties则是在浏览器解析HTML后给元素创建对应的DOM对象上的属性。
 有以下几点需要注意的:
@@ -571,7 +571,7 @@ function shouldSetAsProp(
   return key in el
 }
 ```
-#### 3.1.3.2 样式处理
+##### 3.1.3.2 样式处理
 **Class**
  
 在Vue中为元素设置样式有以下几种方式：
@@ -662,7 +662,7 @@ if (isCssString) {
 }
 ```
   c. 如果没有命中上面两种情况，就移除整个 style 属性
-#### 3.1.3.3 事件处理
+##### 3.1.3.3 事件处理
 如果prop的开头是on:,就会调用patchEvent处理元素的事件，内部会进行绑定事件已经更新事件的操作。
 一般事件我们都是通过addEventListener和removeEventListenerapi直接操作和绑定单个事件，但我们初始化的时候没问题的。Vue通过绑定一个伪造的事件处理函数invoke,只在初始化时绑定一次DOM监听器，后续更新只需要调整invoke的value，下面来看下具体的实现。
 
@@ -791,7 +791,7 @@ function createInvoker(
   return invoker
 }
 ```
-### 3.1.4 子节点处理
+#### 3.1.4 子节点处理
 接下来看看Vue是如何更新元素的子节点的。对于一个dom节点它会有下面这几种情况：
 1. 没有子节点，对应vnode.children的值为null
 2. 具有文本子节点，对应vnode.children的值为字符串
